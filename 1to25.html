@@ -1,9 +1,11 @@
 <html>
 <head>
 <title>1 to 25</title>
-<script src='1to25.js'></script>
+<script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.18.min.js"></script>
+<script type="text/javascript" src='1to25.js'></script>
+<meta name="viewport" content="width=device-width, user-scalable=no">
 <style type='text/css'>
-td {
+div#grid > div > span {
   border: 1px solid black;
   width: 100px;
   height: 100px;
@@ -12,12 +14,14 @@ td {
   font-size: 70px;
   font-family: Comic Sans MS;
   cursor: pointer;
+  display: inline-block;
 }
 
 </style>
 </head>
 
 <body>
-  <table id='grid'></table>
+  <div id='grid'></div>
+  <div id='highscores'></div>
 </body>
 </html>
