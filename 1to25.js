@@ -1,15 +1,17 @@
 Parse.initialize("ZrLQROBsd6m9UVXcydvrW0vsQdz5lBXfWR3I4iMm", "AiViXjR11sw866d5vPSDnNOZ5LRDU3ngvxGg9PCc");
-var width = 4;
+var defaultWidth = 5;
+var width;
 var current;
 var startTime;
 var GameScore = Parse.Object.extend("GameScore");
 
 window.addEventListener('load',function(){
-  initialize();
+  makeBoardSizeOptions();
+  newGame();
   // GameScore = Parse.Object.extend("GameScore");
 });
 
-function initialize(){
+function newGame(){
   var nums = arrayGen();
   current = 1;
   shuffler(nums);
@@ -17,14 +19,31 @@ function initialize(){
   makeScoreList();
 }
 
+function makeBoardSizeOptions(){
+  var select = document.getElementById('size');
+  for(var i=2;i<=10;++i){
+    select.options[select.options.length] = new Option(i+'',i+'');
+  }
+  select.value = defaultWidth+'';
+  width = defaultWidth;
+  select.addEventListener('change',function(){
+    width = parseInt(select.value);
+    newGame();
+  });
+}
+
 function makeScoreList(){
   var highScores = document.getElementById('highscores');
 
   highscores.innerHTML = "";
 
+  scoreTitleSize = document.getElementById('nxn');
+  scoreTitleSize.innerHTML = (width*width)+'';
+
   var query = new Parse.Query(GameScore);
   query.ascending("score");
   query.limit(10);
+  query.containedIn('size',[width]);
   query.find({
     success: function(results){
       // console.log(results);
@@ -86,7 +105,7 @@ function clear(){
       var stopTime = Date.now();
       var millis = stopTime-startTime;
       submitScore(millis);
-      initialize();
+      newGame();
     }
   }
 }
@@ -97,6 +116,7 @@ function submitScore(millis){
     var gameScore = new GameScore();
     gameScore.set('score',millis);
     gameScore.set('name',name);
+    gameScore.set('size',width);
     gameScore.save(null, {
       success: function(){
         console.log('success');
