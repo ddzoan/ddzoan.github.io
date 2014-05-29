@@ -8,7 +8,6 @@ var GameScore = Parse.Object.extend("GameScore");
 window.addEventListener('load',function(){
   makeBoardSizeOptions();
   newGame();
-  // GameScore = Parse.Object.extend("GameScore");
 });
 
 function newGame(){
@@ -36,9 +35,14 @@ function makeScoreList(){
   var highScores = document.getElementById('highscores');
 
   highscores.innerHTML = "";
+  var loadingGif = document.createElement('img');
+  loadingGif.setAttribute('src','loading.gif');
+  loadingGif.setAttribute('height','150');
+  highscores.appendChild(loadingGif);
 
-  scoreTitleSize = document.getElementById('nxn');
+  var scoreTitleSize = document.getElementById('nxn');
   scoreTitleSize.innerHTML = (width*width)+'';
+  document.title = '1 to ' + (width*width);
 
   var query = new Parse.Query(GameScore);
   query.ascending("score");
@@ -46,13 +50,13 @@ function makeScoreList(){
   query.containedIn('size',[width]);
   query.find({
     success: function(results){
-      // console.log(results);
       var list = document.createElement('ol');
       for(var i=0; i < results.length; ++i){
         var item = document.createElement('li');
         item.appendChild(document.createTextNode(results[i].get('name') + ' - ' + results[i].get('score') + ' milliseconds'));
         list.appendChild(item);
       }
+      highscores.innerHTML = "";
       highScores.appendChild(list);
     },
     error: parseError
