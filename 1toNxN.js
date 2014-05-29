@@ -44,23 +44,24 @@ function makeScoreList(){
   scoreTitleSize.innerHTML = (width*width)+'';
   document.title = '1 to ' + (width*width);
 
-  var query = new Parse.Query(GameScore);
-  query.ascending("score");
-  query.limit(10);
-  query.containedIn('size',[width]);
-  query.find({
-    success: function(results){
-      var list = document.createElement('ol');
-      for(var i=0; i < results.length; ++i){
-        var item = document.createElement('li');
-        item.appendChild(document.createTextNode(results[i].get('name') + ' - ' + results[i].get('score') + ' milliseconds'));
-        list.appendChild(item);
-      }
-      highscores.innerHTML = "";
-      highScores.appendChild(list);
-    },
-    error: parseError
+  var request = new XMLHttpRequest();
+  request.addEventListener('load',function(){
+    var results = JSON.parse(request.responseText).results;
+    var list = document.createElement('ol');
+
+    for(var i=0; i < results.length; ++i){
+      var item = document.createElement('li');
+      item.appendChild(document.createTextNode(results[i].name + ' - ' + results[i].score + ' milliseconds'));
+      list.appendChild(item);
+    }
+
+    highscores.innerHTML = "";
+    highScores.appendChild(list);
   });
+  request.open("get","https://api.parse.com/1/classes/GameScore?"+"where=%7B%22size%22:"+width+"%7D&order=score");
+  request.setRequestHeader('X-Parse-Application-Id','ZrLQROBsd6m9UVXcydvrW0vsQdz5lBXfWR3I4iMm');
+  request.setRequestHeader('X-Parse-REST-API-Key','Xsj4oMCDvcQa5ZhLt7IAh22URxBS7vGHseY2GIqY');
+  request.send();
 }
 
 function makeGrid(nums){
