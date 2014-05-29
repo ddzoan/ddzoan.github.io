@@ -31,7 +31,7 @@ function makeScoreList(){
       var list = document.createElement('ol');
       for(var i=0; i < results.length; ++i){
         var item = document.createElement('li');
-        item.innerHTML = results[i].get('name') + ' - ' + results[i].get('score') + ' milliseconds';
+        item.appendChild(document.createTextNode(results[i].get('name') + ' - ' + results[i].get('score') + ' milliseconds'));
         list.appendChild(item);
       }
       highScores.appendChild(list);
