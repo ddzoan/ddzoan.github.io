@@ -7,10 +7,10 @@ var rates = [];
 var pricewords = [];
 var prices = [];
 var pricePerCpS = [];
-var spree;
+var spree = false;
 function clicked(){yum.click();document.getElementById('goldenCookie').click();setTimeout(clicked,0);}
 function goShopping(){shoppingSpree();if(spree){setTimeout(goShopping,1);}}
-function startShopping(){spree = true;goShopping();}
+function startShopping(){if(spree == false){spree = true;goShopping();}}
 function stopShopping(){spree = false;}
 
 clicked();
