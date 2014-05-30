@@ -7,12 +7,14 @@ var rates = [];
 var pricewords = [];
 var prices = [];
 var pricePerCpS = [];
-var stop = false;
+var spree;
 function clicked(){yum.click();document.getElementById('goldenCookie').click();setTimeout(clicked,0);}
-function goOnSpree(){shoppingSpree();if(!stop){setTimeout(goOnSpree,1);}}
+function goShopping(){shoppingSpree();if(spree){setTimeout(goShopping,1);}}
+function startShopping(){spree = true;goShopping();}
+function stopShopping(){spree = false;}
 
 clicked();
-console.log('Set stop to true and run goOnSpree(); to buy the best value item as soon as it is affordable. Set stop to true to stop shopping spree. Accessible vars: ratewords, rates, pricewords, prices, pricePerCpS')
+console.log('startShopping() to buy the best value item as soon as it is affordable. stopShopping() to stop. Accessible vars: ratewords, rates, pricewords, prices, pricePerCpS')
 
 function shoppingSpree(){
   for(var i=0;i<ITEMS;++i){
