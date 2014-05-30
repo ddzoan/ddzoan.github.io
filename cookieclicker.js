@@ -8,13 +8,29 @@ var pricewords = [];
 var prices = [];
 var pricePerCpS = [];
 var spree = false;
+
 function clicked(){yum.click();document.getElementById('goldenCookie').click();setTimeout(clicked,0);}
-function goShopping(){shoppingSpree();if(spree){setTimeout(goShopping,1);}}
-function startShopping(){if(spree == false){spree = true;goShopping();}}
-function stopShopping(){spree = false;}
 
 clicked();
 console.log('startShopping() to buy the best value item as soon as it is affordable. stopShopping() to stop. Accessible vars: ratewords, rates, pricewords, prices, pricePerCpS')
+
+function goShopping(){
+  shoppingSpree();
+  if(spree){
+    setTimeout(goShopping,1);
+  }
+}
+
+function startShopping(){
+  if(!spree){
+    spree = true;
+    goShopping();
+  }
+}
+
+function stopShopping(){
+  spree = false;
+}
 
 function shoppingSpree(){
   for(var i=0;i<ITEMS;++i){
