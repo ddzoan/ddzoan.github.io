@@ -13,14 +13,17 @@ var timeToAll = [];
 var spree = false;
 var keepClicker = false;
 var keepCircleClicker = false;
+var keepSeasonClicker = false;
 
 var addClickerButton = document.createElement('button');
 var addCircleClicker = document.createElement('button');
+var addSeasonClicker = document.createElement('button');
 var addShopperButton = document.createElement('button');
 
 function refreshButtonNames(){
   addClickerButton.innerHTML = keepClicker ? "Stop Auto-Clicker" : "Start Auto-Clicker";
   addCircleClicker.innerHTML = keepCircleClicker ? "Stop Circle Clicker" : "Start Circle Clicker";
+  addSeasonClicker.innerHTML = keepSeasonClicker ? "Stop Season Clicker" : "Start Season Clicker";
   addShopperButton.innerHTML = spree ? "Stop Shop and Roll" : "Start Shopping Spree";
 }
 
@@ -30,6 +33,7 @@ if(!buttonsLoaded){
   topbar.innerHTML="";
   topbar.appendChild(addClickerButton);
   topbar.appendChild(addCircleClicker);
+  topbar.appendChild(addSeasonClicker);
   topbar.appendChild(addShopperButton);
   buttonsLoaded = true;
   refreshButtonNames();
@@ -49,6 +53,15 @@ if(!buttonsLoaded){
     }
     else {
       startCircleClicker();
+    }
+    refreshButtonNames();
+  });
+  addSeasonClicker.addEventListener('click',function(){
+    if(keepSeasonClicker){
+      stopSeasonClicker();
+    }
+    else {
+      startSeasonClicker();
     }
     refreshButtonNames();
   });
@@ -75,7 +88,6 @@ function stopCookieClicker(){
 function clicked(){
   yum.click();
   document.getElementById('goldenCookie').click();
-  document.getElementById('seasonPopup').click();
   if(keepClicker){
     setTimeout(clicked,0);  
   }
@@ -113,6 +125,22 @@ function circleClick(){
     }
   }
   radianClicker();
+}
+
+function startSeasonClicker(){
+  keepSeasonClicker = true;
+  seasonClicker();
+}
+
+function stopSeasonClicker(){
+  keepSeasonClicker = false;
+}
+
+function seasonClicker(){
+  document.getElementById('seasonPopup').click();
+  if(keepSeasonClicker){
+    setTimeout(seasonClicker,0);
+  }
 }
 
 // clicked();
