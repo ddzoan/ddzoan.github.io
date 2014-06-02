@@ -2,12 +2,13 @@
 
 var yum = document.getElementById('bigCookie');
 var ITEMS = 11;
+var titles = [];
 var ratewords = [];
 var rates = [0.1,0.5,4,10,40,100,400,6666,98765,1022031,10220312];
 var pricewords = [];
 var prices = [15,100,500,3000,10000,40000,200000,1.667e6,123.456e6,4e9,75e9];
 var pricePerCpS = [];
-var recoveryTime = [];
+var sortedValueBuys = [];
 var timeToAll = [];
 var spree = false;
 var keepClicker = false;
@@ -20,7 +21,7 @@ var addShopperButton = document.createElement('button');
 function refreshButtonNames(){
   addClickerButton.innerHTML = keepClicker ? "Stop Auto-Clicker" : "Start Auto-Clicker";
   addCircleClicker.innerHTML = keepCircleClicker ? "Stop Circle Clicker" : "Start Circle Clicker";
-  addShopperButton.innerHTML = spree ? "Stop, Shop, and Roll" : "Start Shopping Spree";
+  addShopperButton.innerHTML = spree ? "Stop Shop and Roll" : "Start Shopping Spree";
 }
 
 var buttonsLoaded;
@@ -74,6 +75,7 @@ function stopCookieClicker(){
 function clicked(){
   yum.click();
   document.getElementById('goldenCookie').click();
+  document.getElementById('seasonPopup').click();
   if(keepClicker){
     setTimeout(clicked,0);  
   }
@@ -144,7 +146,7 @@ function buyBestItem(){
   }
   else{
     for(var i=best_value_index-1; i > 0; --i){
-      if(pricePerCpS < timeToNextBiggest && prices[i] <= myCookies){
+      if(pricePerCpS < timeToNextBiggest() && prices[i] <= myCookies){
         document.getElementById('productPrice'+i).click();
       }
     }
@@ -208,4 +210,23 @@ function getTimeToAll(){
   for(var i=0 ; i < ITEMS; ++i){
     timeToAll[i] = (prices[i]-myCookies)/makeRate;
   }
+  return timeToAll;
+}
+
+function getTitles(){
+  for(var i=0; i<ITEMS; ++i){
+    titles[i] = document.getElementById('productName'+i).innerHTML;
+  }
+}
+
+function valueSort(){
+  getTitles();
+  updatePrices();
+  var duplicate = JSON.parse(JSON.stringify(pricePerCpS));
+
+  duplicate.sort();
+  for(var i=0; i<ITEMS; ++i){
+    sortedValueBuys[i] = titles[pricePerCpS.indexOf(duplicate[i])];
+  }
+  return sortedValueBuys;
 }
