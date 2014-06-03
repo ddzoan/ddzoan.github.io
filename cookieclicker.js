@@ -119,7 +119,7 @@ function circleClick(){
     Game.mouseY = centerY + radius * Math.sin(angle);
     yum.click();
     document.getElementById('goldenCookie').click();
-    angle += Math.PI / 12;
+    angle += Math.PI / 24;
     if(keepCircleClicker){
       setTimeout(radianClicker,0);
     }
@@ -149,7 +149,7 @@ console.log('startShopping() to buy the best value item as soon as it is afforda
 function goShopping(){
   buyBestItem();
   if(spree){
-    setTimeout(goShopping,10);
+    setTimeout(goShopping,1000);
   }
 }
 
@@ -174,7 +174,7 @@ function buyBestItem(){
   }
   else{
     for(var i=best_value_index-1; i > 0; --i){
-      if(pricePerCpS < timeToNextBiggest() && prices[i] <= myCookies){
+      if(pricePerCpS[i] < timeToValuePurchase() && prices[i] <= myCookies){
         document.getElementById('productPrice'+i).click();
       }
     }
@@ -219,8 +219,8 @@ function numberfy(wordnumber){
 }
 
 function timeToNextBiggest(){
-  var makeRate = numberfy(document.getElementById('cookies').childNodes[3].innerHTML.split(': ')[1]);
-  var myCookies = numberfy(document.getElementById('cookies').childNodes[0].wholeText);
+  var makeRate = getRate();
+  var myCookies = getCookieBank();
 
   for(var i=0 ; myCookies > prices[i]; ++i){
     pricewords[i] = document.getElementById('productPrice'+i).innerHTML;
@@ -229,9 +229,18 @@ function timeToNextBiggest(){
   return (prices[i]-myCookies)/makeRate;
 }
 
+function timeToValuePurchase(){
+  var makeRate = getRate();
+  var myCookies = getCookieBank();
+
+  updatePrices();
+
+  return (prices[index_of_lowest(pricePerCpS)]-myCookies)/makeRate;
+}
+
 function getTimeToAll(){
-  var makeRate = numberfy(document.getElementById('cookies').childNodes[3].innerHTML.split(': ')[1]);
-  var myCookies = numberfy(document.getElementById('cookies').childNodes[0].wholeText);
+  var makeRate = getRate();
+  var myCookies = getCookieBank();
 
   updatePrices();
 
@@ -245,6 +254,25 @@ function getTitles(){
   for(var i=0; i<ITEMS; ++i){
     titles[i] = document.getElementById('productName'+i).innerHTML;
   }
+}
+
+function getRate(){
+  function rate(){
+    return numberfy(document.getElementById('cookies').childNodes[3].innerHTML.split(': ')[1]);
+  }
+
+  try {
+    makeRate = rate();
+  }
+  catch(e){
+    makeRate = setTimeout(rate,1000);
+  }
+  return makeRate;
+}
+
+function getCookieBank(){
+  var myCookies = numberfy(document.getElementById('cookies').childNodes[0].wholeText);
+  return myCookies;
 }
 
 function valueSort(){
