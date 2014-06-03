@@ -144,7 +144,7 @@ function seasonClicker(){
 }
 
 // clicked();
-console.log('startShopping() to buy the best value item as soon as it is affordable. stopShopping() to stop. Accessible vars: ratewords, rates, pricewords, prices, pricePerCpS')
+console.log('Welcome to the Cookie Clicker hack');
 
 function goShopping(){
   buyBestItem();
