@@ -149,7 +149,7 @@ console.log('Welcome to the Cookie Clicker hack');
 function goShopping(){
   buyBestItem();
   if(spree){
-    setTimeout(goShopping,1000);
+    setTimeout(goShopping,0);
   }
 }
 
@@ -167,7 +167,7 @@ function stopShopping(){
 function buyBestItem(){
   updatePrices();
 
-  var myCookies = numberfy(document.getElementById('cookies').childNodes[0].wholeText);
+  var myCookies = getCookieBank();
   var best_value_index = index_of_lowest(pricePerCpS);
   if(prices[best_value_index] <= myCookies){
     document.getElementById('productPrice'+best_value_index).click();
@@ -207,6 +207,9 @@ function index_of_lowest(nums){
 }
 
 function numberfy(wordnumber){
+  if(typeof(wordnumber) == "number"){
+    return wordnumber;  
+  }
   var magnitude = {"million": 1e6, "billion": 1e9, "trillion": 1e12, "quadrillion": 1e15, "quintillion": 1e18, "sextillion": 1e21, "septillion": 1e24, "octillion": 1e27, "nonillion": 1e30, "decillion": 1e33, "undecillion": 1e36, "duodecillion": 1e39, "tredecillion": 1e42, "quattuordecillion": 1e45};
   var num_mag = wordnumber.replace(/,/g,"").split(' ');
   num_mag[0] = parseFloat(num_mag[0]);
@@ -257,6 +260,8 @@ function getTitles(){
 }
 
 function getRate(){
+  var makeRate;
+
   function rate(){
     return numberfy(document.getElementById('cookies').childNodes[3].innerHTML.split(': ')[1]);
   }
@@ -285,4 +290,13 @@ function valueSort(){
     sortedValueBuys[i] = titles[pricePerCpS.indexOf(duplicate[i])];
   }
   return sortedValueBuys;
+}
+
+function timeToValue(num){
+  var makeRate = getRate();
+  var myCookies = getCookieBank();
+
+  var seconds = (numberfy(num)-myCookies)/makeRate;
+
+  return seconds + ' seconds = ' + seconds/60 + ' minutes = ' + seconds/3600 + ' hours';
 }
