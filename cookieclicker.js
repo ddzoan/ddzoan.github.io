@@ -14,17 +14,20 @@ var spree = false;
 var keepClicker = false;
 var keepCircleClicker = false;
 var keepSeasonClicker = false;
+var keepGCclicker = false;
 
 var addClickerButton = document.createElement('button');
 var addCircleClicker = document.createElement('button');
 var addSeasonClicker = document.createElement('button');
 var addShopperButton = document.createElement('button');
+var addGCclickerButton = document.createElement('button');
 
 function refreshButtonNames(){
   addClickerButton.innerHTML = keepClicker ? "Stop Auto-Clicker" : "Start Auto-Clicker";
   addCircleClicker.innerHTML = keepCircleClicker ? "Stop Circle Clicker" : "Start Circle Clicker";
   addSeasonClicker.innerHTML = keepSeasonClicker ? "Stop Season Clicker" : "Start Season Clicker";
   addShopperButton.innerHTML = spree ? "Stop Shop and Roll" : "Start Shopping Spree";
+  addGCclickerButton.innerHTML = keepGCclicker ? "Stop Golden Cookie Clicker" : "Start Golden Cookie Clicker";
 }
 
 var buttonsLoaded;
@@ -35,6 +38,7 @@ if(!buttonsLoaded){
   topbar.appendChild(addCircleClicker);
   topbar.appendChild(addSeasonClicker);
   topbar.appendChild(addShopperButton);
+  topbar.appendChild(addGCclickerButton);
   buttonsLoaded = true;
   refreshButtonNames();
 
@@ -74,6 +78,15 @@ if(!buttonsLoaded){
     }
     refreshButtonNames();
   });
+  addGCclickerButton.addEventListener('click',function(){
+    if(keepGCclicker){
+      stopGCclicker();
+    }
+    else {
+      startGCclicker();
+    }
+    refreshButtonNames();
+  });
 }
 
 function startCookieClicker(){
@@ -90,6 +103,22 @@ function clicked(){
   document.getElementById('goldenCookie').click();
   if(keepClicker){
     setTimeout(clicked,0);  
+  }
+}
+
+function startGCclicker(){
+  keepGCclicker = true;
+  goldenClicker();
+}
+
+function stopGCclicker(){
+  keepGCclicker = false;
+}
+
+function goldenClicker(){
+  document.getElementById('goldenCookie').click();
+  if(keepGCclicker){
+    setTimeout(goldenClicker,0);  
   }
 }
 
