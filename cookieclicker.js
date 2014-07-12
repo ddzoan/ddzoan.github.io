@@ -15,12 +15,15 @@ var keepClicker = false;
 var keepCircleClicker = false;
 var keepSeasonClicker = false;
 var keepGCclicker = false;
+var keepPledgeBuyer = false;
+var pledgeBuyDelayer;
 
 var addClickerButton = document.createElement('button');
 var addCircleClicker = document.createElement('button');
 var addSeasonClicker = document.createElement('button');
 var addShopperButton = document.createElement('button');
 var addGCclickerButton = document.createElement('button');
+var addPledgeButton = document.createElement('button');
 
 function refreshButtonNames(){
   addClickerButton.innerHTML = keepClicker ? "Stop Auto-Clicker" : "Start Auto-Clicker";
@@ -28,6 +31,7 @@ function refreshButtonNames(){
   addSeasonClicker.innerHTML = keepSeasonClicker ? "Stop Season Clicker" : "Start Season Clicker";
   addShopperButton.innerHTML = spree ? "Stop Shop and Roll" : "Start Shopping Spree";
   addGCclickerButton.innerHTML = keepGCclicker ? "Stop Golden Cookie Clicker" : "Start Golden Cookie Clicker";
+  addPledgeButton.innerHTML = keepPledgeBuyer ? "Stop Pledge Buying every 30.5 min" : "Start Pledge Buying every 30.5 min";
 }
 
 var buttonsLoaded;
@@ -39,6 +43,7 @@ if(!buttonsLoaded){
   topbar.appendChild(addSeasonClicker);
   topbar.appendChild(addShopperButton);
   topbar.appendChild(addGCclickerButton);
+  topbar.appendChild(addPledgeButton);
   buttonsLoaded = true;
   refreshButtonNames();
 
@@ -84,6 +89,15 @@ if(!buttonsLoaded){
     }
     else {
       startGCclicker();
+    }
+    refreshButtonNames();
+  });
+  addPledgeButton.addEventListener('click',function(){
+    if(keepPledgeBuyer){
+      stopPledgeBuyer();
+    }
+    else {
+      startPledgeBuyer();
     }
     refreshButtonNames();
   });
@@ -170,6 +184,17 @@ function seasonClicker(){
   if(keepSeasonClicker){
     setTimeout(seasonClicker,0);
   }
+}
+
+function startPledgeBuyer(){
+  keepPledgeBuyer = true;
+  Game.UpgradesById[74].buy();
+  pledgeBuyDelayer = setTimeout(startPledgeBuyer,1830000);
+}
+
+function stopPledgeBuyer(){
+  keepPledgeBuyer = false;
+  clearTimeout(pledgeBuyDelayer);
 }
 
 // clicked();
