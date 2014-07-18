@@ -338,8 +338,8 @@ function valueSort(){
   getTitles();
   updatePrices();
   var duplicate = JSON.parse(JSON.stringify(pricePerCpS));
-
-  duplicate.sort();
+  
+  duplicate.sort(function(a,b){return a-b});
   for(var i=0; i<ITEMS; ++i){
     sortedValueBuys[i] = titles[pricePerCpS.indexOf(duplicate[i])];
   }
