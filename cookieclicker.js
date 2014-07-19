@@ -2,7 +2,7 @@
 
 var yum = document.getElementById('bigCookie');
 var ITEMS = 11;
-var titles = [];
+var titles = ["Cursor", "Grandma", "Farm", "Factory", "Mine", "Shipment", "Alchemy lab", "Portal", "Time machine", "Antimatter condenser", "Prism"];
 var ratewords = [];
 var rates = [0.1,0.5,4,10,40,100,400,6666,98765,1022031,10220312];
 var pricewords = [];
@@ -11,6 +11,7 @@ var pricePerCpS = [];
 var sortedValueBuys = [];
 var timeToAll = [];
 var spree = false;
+var justBoughtSomething = false;
 var keepClicker = false;
 var keepCircleClicker = false;
 var keepSeasonClicker = false;
@@ -24,6 +25,7 @@ var addSeasonClicker = document.createElement('button');
 var addShopperButton = document.createElement('button');
 var addGCclickerButton = document.createElement('button');
 var addPledgeButton = document.createElement('button');
+var addNextBuy = document.createElement('span');
 
 function refreshButtonNames(){
   addClickerButton.innerHTML = keepClicker ? "Stop Auto-Clicker" : "Start Auto-Clicker";
@@ -31,7 +33,7 @@ function refreshButtonNames(){
   addSeasonClicker.innerHTML = keepSeasonClicker ? "Stop Season Clicker" : "Start Season Clicker";
   addShopperButton.innerHTML = spree ? "Stop Shop and Roll" : "Start Shopping Spree";
   addGCclickerButton.innerHTML = keepGCclicker ? "Stop Golden Cookie Clicker" : "Start Golden Cookie Clicker";
-  addPledgeButton.innerHTML = keepPledgeBuyer ? "Stop Pledge Buying every 30.5 min" : "Start Pledge Buying every 30.5 min";
+  addPledgeButton.innerHTML = keepPledgeBuyer ? "Stop Pledge Buying every 30.1 min" : "Start Pledge Buying every 30.1 min";
 }
 
 var buttonsLoaded;
@@ -44,6 +46,7 @@ if(!buttonsLoaded){
   topbar.appendChild(addShopperButton);
   topbar.appendChild(addGCclickerButton);
   topbar.appendChild(addPledgeButton);
+  topbar.appendChild(addNextBuy);
   buttonsLoaded = true;
   refreshButtonNames();
 
@@ -189,7 +192,7 @@ function seasonClicker(){
 function startPledgeBuyer(){
   keepPledgeBuyer = true;
   Game.UpgradesById[74].buy();
-  pledgeBuyDelayer = setTimeout(startPledgeBuyer,1830000);
+  pledgeBuyDelayer = setTimeout(startPledgeBuyer,1810000);
 }
 
 function stopPledgeBuyer(){
@@ -201,9 +204,11 @@ function stopPledgeBuyer(){
 console.log('Welcome to the Cookie Clicker hack');
 
 function goShopping(){
+  justBoughtSomething = false;
   buyBestItem();
+  var buyDelay = justBoughtSomething ? 0 : 30000;
   if(spree){
-    setTimeout(goShopping,0);
+    setTimeout(goShopping,buyDelay);
   }
 }
 
@@ -223,13 +228,16 @@ function buyBestItem(){
 
   var myCookies = getCookieBank();
   var best_value_index = index_of_lowest(pricePerCpS);
+  addNextBuy.innerHTML = 'Current Best Value: ' + titles[best_value_index];
   if(prices[best_value_index] <= myCookies){
     document.getElementById('productPrice'+best_value_index).click();
+    justBoughtSomething = true;
   }
   else{
     for(var i=best_value_index-1; i > 0; --i){
       if(pricePerCpS[i] < timeToValuePurchase() && prices[i] <= myCookies){
         document.getElementById('productPrice'+i).click();
+        justBoughtSomething = true;
       }
     }
   }
@@ -335,7 +343,6 @@ function getCookieBank(){
 }
 
 function valueSort(){
-  getTitles();
   updatePrices();
   var duplicate = JSON.parse(JSON.stringify(pricePerCpS));
   
