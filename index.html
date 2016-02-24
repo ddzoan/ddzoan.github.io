@@ -1,12 +1,23 @@
-<html>
-<head>
-  <title>Dan's page</title>
-</head>
-<body>
-	<ul>
-  <li><a href="1toNxN.html">Click here to play 1 to NxN</a></li>
-  <li><a href="cookie.html">Here is my cookie clicker hack (old, probably broken)</a></li>
-  <li><a href="/snake/">Snake!</a></li>
-</ul>
-</body>
-</html>
+---
+layout: default
+---
+
+<div class="home">
+
+  <h1 class="page-heading">Posts</h1>
+
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li>
+        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+
+        <h2>
+          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        </h2>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+
+</div>
