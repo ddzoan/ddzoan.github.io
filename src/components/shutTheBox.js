@@ -1,0 +1,229 @@
+import React, {useEffect, useState} from 'react';
+
+function ShutTheBox() {
+  const [dice, setDice] = useState([]);
+  const [availableChoices, setAvailableChoices] = useState(allChoices());
+  const [pickingNumbers, setPickingNumbers] = useState(false);
+  const [needsToRoll, setNeedsToRoll] = useState(true);
+  const [selectedNumbers, setSelectedNumbers] = useState(new Set());
+  const [gameOver, setGameOver] = useState(false);
+  const [winner, setWinner] = useState(false);
+
+  useEffect(() => {
+    if (!needsToRoll && !isPossible([...availableChoices], 0, sumArray(dice))) {
+      setGameOver(true);
+      setNeedsToRoll(false);
+    }
+  }, [needsToRoll]);
+
+  useEffect(() => {
+    if (availableChoices.size === 0) {
+      console.log('gameStateAtWin',
+        "dice",
+        "availableChoices",
+        "pickingNumbers",
+        "needsToRoll",
+        "selectedNumbers",
+        "gameOver");
+      console.log('availableChoices.size is equal to zero apparently?', availableChoices.size);
+      console.log('gameStateAtWin',
+        dice,
+        availableChoices,
+        pickingNumbers,
+        needsToRoll,
+        selectedNumbers,
+        gameOver);
+
+      setGameOver(true);
+      setWinner(true);
+    }
+  }, [availableChoices.size]);
+
+  const canFinalizeSelection = pickingNumbers && canSelectNumbers(selectedNumbers, sumArray(dice));
+
+  useEffect(() => {
+    const handleKeypress = event => {
+      switch (event.key) {
+        case "r":
+          rollDice();
+          break;
+        case "n":
+          newGame();
+          break;
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
+          if (pickingNumbers) {
+            toggleChoice(parseInt(event.key));
+          }
+          break;
+        case "Enter":
+          if (canFinalizeSelection) {
+            finalizeSelection();
+          }
+          break;
+        default:
+          console.log("default", event.key);
+          break;
+      }
+    };
+    window.addEventListener("keypress", handleKeypress);
+    return () => window.removeEventListener("keypress", handleKeypress);
+  });
+
+  const newGame = () => {
+    setDice([]);
+    setAvailableChoices(allChoices());
+    setPickingNumbers(false);
+    setSelectedNumbers(new Set());
+    setGameOver(false);
+    setNeedsToRoll(true);
+  };
+
+  const rollDice = () => {
+    if (!gameOver && needsToRoll) {
+      console.log("rolling");
+      sumArray([...availableChoices]) > 6 ? setDice([rollDie(), rollDie()]) : setDice([rollDie()]);
+      setNeedsToRoll(false);
+      setPickingNumbers(true);
+    }
+  };
+
+  const toggleChoice = choice => {
+    if (!gameOver && availableChoices.has(choice)) {
+      const newChosenNumbers = new Set(selectedNumbers);
+      selectedNumbers.has(choice) ? newChosenNumbers.delete(choice) : newChosenNumbers.add(choice);
+      setSelectedNumbers(newChosenNumbers);
+    }
+  };
+
+  const finalizeSelection = () => {
+    if (!gameOver && !needsToRoll) {
+      console.log("finalize selection")
+      const newAvailableChoices = new Set(availableChoices);
+      [...selectedNumbers].forEach(number => newAvailableChoices.delete(number));
+      setAvailableChoices(newAvailableChoices);
+      setSelectedNumbers(new Set());
+      setDice([]);
+      setPickingNumbers(false);
+      setNeedsToRoll(true);
+    }
+  };
+
+  return (
+    <div className="ShutTheBox">
+      <div style={{display: 'flex', flexDirection: 'column'}}>
+        <Numbers
+          availableChoices={availableChoices}
+          chosenNumbers={selectedNumbers}
+          toggleChoice={toggleChoice}
+          disabled={!pickingNumbers}
+          gameOver={gameOver}/>
+        <div>
+          <button
+            disabled={!canFinalizeSelection}
+            onClick={finalizeSelection}
+          >
+            Select these numbers
+          </button>
+        </div>
+        <div>
+          <button
+            onClick={rollDice}
+            disabled={!needsToRoll}
+          >
+            Roll
+          </button>
+        </div>
+        Dice:
+        {dice.length > 0 && <Dice dice={dice}/>}
+        {
+          gameOver ?
+            (
+              <div>
+                <div>GAME OVER</div>
+                {
+                  winner ?
+                    <div>You shut the box!!!</div>
+                    :
+                    <>
+                      <div>{JSON.stringify([...availableChoices])}</div>
+                      <div>Total <span>{sumArray([...availableChoices])}</span></div>
+                    </>
+                }
+
+                <button onClick={newGame}>Start new game</button>
+              </div>
+            )
+            : <div>{pickingNumbers ? "Select your numbers" : "Roll the dice"}</div>
+        }
+      </div>
+    </div>
+  );
+}
+
+export default ShutTheBox;
+
+function Dice({dice}) {
+  return (
+    <div>
+      {dice.map((die, i) => <div key={`die${i}`}>{die}</div>)}
+    </div>
+  );
+}
+
+const Numbers = ({availableChoices, chosenNumbers, toggleChoice, disabled, gameOver}) => {
+  return (
+    <div>
+      {possibleChoices.map(choice => (
+        <button
+          key={choice}
+          disabled={disabled || !availableChoices.has(choice)}
+          style={{color: availableChoices.has(choice) && chosenNumbers.has(choice) && 'red'}}
+          onClick={() => {
+            !gameOver && toggleChoice(choice)
+          }}
+        >
+          {choice}
+        </button>
+      ))}
+    </div>
+  );
+};
+const possibleChoices = [...Array(9).keys()].map(i => i + 1);
+
+const rollDie = () => Math.ceil(Math.random() * 6);
+
+const allChoices = () => new Set([...Array(9).keys()].map(i => i + 1));
+
+const canSelectNumbers = (selectedNumbers, total) => (
+  sumArray([...selectedNumbers]) === total
+);
+
+const sumArray = (arr) => arr.reduce((a, b) => a + b, 0);
+
+const isPossible = (valuesArray, sum, target) => {
+  if (sum === target) {
+    return true;
+  }
+  if (sum > target) {
+    return false;
+  }
+  for (let i = 0; i < valuesArray.length; i++) {
+    let remainingValues = valuesArray.slice(0); // copy
+    remainingValues.splice(i, 1);
+    // console.log("depth")
+    if (isPossible(remainingValues, sum + valuesArray[i], target)) {
+      // console.log("remainingValues", "valuesArray[i]", "target")
+      // console.log(remainingValues, valuesArray[i], target)
+      return true;
+    }
+  }
+  return false;
+};
