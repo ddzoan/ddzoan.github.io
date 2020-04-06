@@ -6,7 +6,7 @@ import ShutTheBox from "../components/shutTheBox";
 
 const ShutTheBoxPage = () => (
   <Layout>
-    <SEO title="Dan Dzoan - Shut The Box" />
+    <SEO title="Shut The Box" />
     <ShutTheBox />
   </Layout>
 );
